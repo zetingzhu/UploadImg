@@ -1,0 +1,48 @@
+<templateSet group="zzt">
+  <template name="sign" value="    private static volatile $NAME$ instance;&#10;    public $NAME$() {}&#10;    public static  $NAME$  getInstance() {&#10;        if (instance == null) {&#10;            synchronized ( $NAME$ .class) {&#10;                if (instance == null) {&#10;                    instance = new  $NAME$ ();&#10;                }&#10;            }&#10;        }&#10;        return instance;&#10;    }&#10;" description="Java 单利" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="className()" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="ztag" value=" private static final String TAG = $NAME$.class.getSimpleName() ;" description="Java TAG" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="className()" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="ztagk" value="val TAG = $NAME$::class.java.simpleName" description="Kotlin TAG" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="className()" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="KOTLIN" value="true" />
+    </context>
+  </template>
+  <template name="ztest" value="/**********************测试数据**********************/&#10;if (BuildConfig.DEBUG) {&#10;&#10;}&#10;/**********************测试数据**********************/&#10;" description="测试数据块" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="sign2" value="private static class InnerClass{&#10;    private  static final $NAME$ INSTANCE = new $NAME$();&#10;}&#10;private $NAME$() {}&#10;public static $NAME$ getInstance() {&#10;    return InnerClass.INSTANCE;&#10;}" description="Java 单利2" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="className()" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="zfork" value=" for ((index, value) in  $ITERABLE$.withIndex()) {&#10; }" description="kotlin for循环" toReformat="true" toShortenFQNames="true">
+    <variable name="ITERABLE" expression="kotlinVariable()" defaultValue="&quot;iterable&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="KOTLIN_STATEMENT" value="true" />
+    </context>
+  </template>
+  <template name="zliveSP" value="public LiveData&lt;String&gt; get$LIMIT$() {&#10;    return  ;&#10;}&#10;&#10;public void post$LIMIT$( String  str) {&#10;    .postValue(str);&#10;}" description="ViewModel 简单的get,post 方法" toReformat="false" toShortenFQNames="true">
+    <variable name="LIMIT" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="ztestLog" value="if (BuildConfig.DEBUG_LOG) {&#10;&#10;}&#10;" description="测试日志模块" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+</templateSet>
