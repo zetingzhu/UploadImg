@@ -60,8 +60,13 @@ Translation 翻译，可配置翻译源
 # 查找依赖树
 ./gradlew app:dependencies
 ./gradlew app:dependencies > text
+
 搜索 XXXCompileClasspath、 XXXRunTimeClasspath
 
+./gradlew -q :app:dependencies > textq
+
 ./gradlew -q :AppCommon:dependencies > text
+
 ./gradlew -q :AppCommon:androidDependencies
+
 ./gradlew -q :AppCommon:dependencies --configuration implementation
