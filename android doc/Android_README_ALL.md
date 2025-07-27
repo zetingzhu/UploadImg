@@ -1,4 +1,20 @@
 
+研究Retrofit：理解动态代理，注解，反射，学习它所用到的设计模式，达到自己能手写它的核心实现
+研究Okhttp:理解它的请求如何共享同一个Socket,内置连接池，连接复用，gzip压缩，响应缓存，自动重试，底层OKIO,所设计到的模式，尤其是拦截器部分的责任链模式
+GreenDao,Romm，掌握对象映射，自动生成代码系列，相关 apt,kapt,ksp,spi相关机制等
+MMKV,掌握Protobuf, mmap，关联binder跨进程通信 只copy一次原理
+SmartRefreshlayout,掌握自定义view,和它的设计思路
+Arouter:掌握路由原理，及ASM字节码插桩
+Bugly：掌握崩溃，异常捕获，能自定义Thread.UncaughtExcerptionHandler处理异常方案及对traces.txt文件监控方案并分析
+Exoplayer掌握音视频的硬解码，缓存处理，能手写它
+glide深入理解它的三部分，with部分，注册编码器，管理请求和生命周期监听，load部分，每个请求单独配置option,into部分，启动请求，加载数据，对数据解码，转码，缓存数据，显示数据
+RxJava，掌握它背压模式，观察者模式，如何切换线程，能手写它
+MPAndroidChart:掌握android 画布绘制原理，能自己绘制各种图表
+直播IM的SDK,掌握音频 视频，编码，解码 原理，rtmp,rtsp推拉流等
+
+
+
+
 # AppFrame
 
 
