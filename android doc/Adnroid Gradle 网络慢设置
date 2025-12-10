@@ -10,7 +10,7 @@ https://maven.aliyun.com/mvn/guide
 
 
 
-配置阿里镜像(有用)
+# 配置阿里镜像(有用)
 ```
 // 阿里云镜像
 maven { url 'https://maven.aliyun.com/repository/public' }
@@ -18,7 +18,7 @@ maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
 maven { url 'https://maven.aliyun.com/repository/google' }
 ```
 
-配置腾讯镜像（有用）
+# 配置腾讯镜像（有用）
 ```
 // 腾讯云镜像
 maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
@@ -26,10 +26,22 @@ maven { url 'https://mirrors.tencent.com/repository/maven/tencent-public/' }
 ```
 
 
+# 手动配置（有用）
+1. gradle/wrapper/gradle-wrapper.properties 修改
+```text
+distributionUrl=https\://mirrors.aliyun.com/macports/distfiles/gradle/gradle-8.11.1-bin.zip
+```
+2. settings.gradle.kts 修改
+```Kotlin
+maven { url = uri("https://maven.aliyun.com/repository/public") }
+maven { url = uri("https://maven.aliyun.com/repository/google") }
+maven { url = uri("https://maven.aliyun.com/repository/gradle-plugin") }
+maven { url = uri("https://maven.aliyun.com/repository/jcenter") }
+```
 
 
 
-配置gradle.properties
+# 配置gradle.properties（没用）
 在~/.gradle/gradle.properties中添加：
 ```
 systemProp.http.proxyHost=mirrors.aliyun.com
@@ -39,80 +51,8 @@ org.gradle.caching=true
 ```
 
 
-kotlin 初始化 init.gradle 设置（有用）
-```
-init.gradle.kts
-
-// For Kotlin DSL
-fun RepositoryHandler.enableMirror() {
-    all {
-        if (this is MavenArtifactRepository) {
-            val originalUrl = url.toString().removeSuffix("/")
-            urlMappings[originalUrl]?.let {
-                logger.lifecycle("Repository[$url] is mirrored to $it")
-                setUrl(it)
-            }
-        }
-    }
-}
-
-val urlMappings = mapOf(
-        "https://repo.maven.apache.org/maven2" to "https://mirrors.tencent.com/nexus/repository/maven-public/",
-        "https://dl.google.com/dl/android/maven2" to "https://mirrors.tencent.com/nexus/repository/maven-public/",
-        "https://plugins.gradle.org/m2" to "https://mirrors.tencent.com/nexus/repository/gradle-plugins/"
-)
-
-allprojects {
-    buildscript {
-        repositories.enableMirror()
-    }
-    repositories.enableMirror()
-}
-
-gradle.beforeSettings {
-    pluginManagement.repositories.enableMirror()
-    dependencyResolutionManagement.repositories.enableMirror()
-}
-```
-
-
-groovy 初始化 init.gradle 设置（有用）
-```
-// For Groovy DSL
-def enableMirror = { repositories ->
-    repositories.all {
-        if (it instanceof MavenArtifactRepository) {
-            def originalUrl = it.url.toString().replaceFirst('/$', '')
-            def mirroredUrl = urlMappings[originalUrl]
-            if (mirroredUrl) {
-                logger.lifecycle("Repository[${it.url}] is mirrored to $mirroredUrl")
-                it.url = mirroredUrl
-            }
-        }
-    }
-}
-
-def urlMappings = [
-        "https://repo.maven.apache.org/maven2": "https://mirrors.tencent.com/nexus/repository/maven-public/",
-        "https://dl.google.com/dl/android/maven2": "https://mirrors.tencent.com/nexus/repository/maven-public/",
-        "https://plugins.gradle.org/m2": "https://mirrors.tencent.com/nexus/repository/gradle-plugins/"
-]
-
-allprojects {
-    buildscript {
-        repositories.enableMirror()
-    }
-    repositories.enableMirror()
-}
-
-gradle.beforeSettings { settings ->
-    settings.pluginManagement.repositories.enableMirror()
-    settings.dependencyResolutionManagement.repositories.enableMirror()
-}
-```
-
-
-全局配置,阿里云镜像 init.gradle deepseek
+全局配置,阿里云镜像 （没用）
+在用户主目录下的 ~/.gradle/init.gradle 文件中添加：
 ```groovy
 allprojects {
     repositories {
@@ -145,7 +85,7 @@ allprojects {
 }
 ```
 
-全局配置,腾讯云镜像 init.gradle deepseek 
+全局配置,腾讯云镜像 init.gradle deepseek
 ```groovy
 allprojects {
     repositories {
