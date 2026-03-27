@@ -7,13 +7,11 @@ ext {
   compileSdkVersion = 35
   targetSdkVersion = 35
 }
-
 ```
 
-
 # 问题一
-Failed to load resources table in APK 'D:\ZZTAndroid\Sdk\platforms\android-35\android.jar'.
 
+Failed to load resources table in APK 'D:\ZZTAndroid\Sdk\platforms\android-35\android.jar'.
 
 **解决方法**
 
@@ -24,26 +22,25 @@ https://planet.kde.org/hanyangzhang-2024-07-23-building-and-running-qml-android-
         classpath 'com.android.tools.build:gradle:8.4.1'
     }
 
-
 ---
 
 # 问题二 升级 Gradle
 
 1. 修改
- - 升级 AGP Version   8.4.1
- - 升级 Gradle Version  8.7
+   - 升级 AGP Version   8.4.1
+   - 升级 Gradle Version  8.7
 
 解决方法
 
 ![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20250123114803.png)
 
 2. 添加 namespace
-```
-android {
+   
+   ```
+   android {
     namespace 'com.easylife.ten.lib'
-}
-```
-
+   }
+   ```
 
 ## jDK 要升级
 
@@ -54,7 +51,6 @@ This project is configured to use an older Gradle JVM that supports up to versio
 
 修改jdk 17
 
-
 ## 修改后执行不成功  switchToDebug 任务失败
 
 Reason: Task ':AppCommon:process_debugDebugGoogleServices' uses this output of task ':AppCommon:switchToDebug' without declaring an explicit or implicit dependency. This can lead to incorrect results being produced, depending on what order the tasks are executed.
@@ -63,13 +59,15 @@ Reason: Task ':AppCommon:process_debugDebugGoogleServices' uses this output of t
 
 <font color=red>暂时没有解决方案，先给去掉</font>
 
-##  错误找不到 tv.danmaku.ijk.media.player 包下类容
+## 错误找不到 tv.danmaku.ijk.media.player 包下类容
+
 错误: 找不到符号
 import tv.danmaku.ijk.media.player.IIjkMediaPlayer;
 
 **解决方法**
 
 build.gradle 文件加下添加 aidl 配置
+
 ```
 android {
 /*生成 AIDL 文件对应Class类*/
@@ -81,11 +79,12 @@ android {
 
 ![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20250123134248.png)
 
-
 ## 错误 jvm 和 kotlin 版本问题
+
 * What went wrong:
-Execution failed for task ':AppCommon:kaptGenerateStubs_debugDebugKotlin'.
-> Inconsistent JVM-target compatibility detected for tasks 'compile_debugDebugJavaWithJavac' (1.8) and 'kaptGenerateStubs_debugDebugKotlin' (17).
+  Execution failed for task ':AppCommon:kaptGenerateStubs_debugDebugKotlin'.
+  
+  > Inconsistent JVM-target compatibility detected for tasks 'compile_debugDebugJavaWithJavac' (1.8) and 'kaptGenerateStubs_debugDebugKotlin' (17).
 
 **解决方法**
 
@@ -97,14 +96,13 @@ android {
   }
 
 }
-```  
+```
 
 ---
 
 # 问题三  Transform 已经被删除，无痕埋点需要重新写
 
 ### autotrackings 项目以下文件变更
-
 
 修改文件目录结构
 ![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20250123164723.png)
@@ -150,7 +148,6 @@ publishing {
         }
     }
 }
-
 ```
 
 - tracking.leyoujia.properties
@@ -159,6 +156,7 @@ publishing {
 #implementation-class= com.jjshome.mobile.autotrackings.TrackingPlugin
 implementation-class= com.jjshome.mobile.autotrackings.TrackingPlugin80
 ```
+
 - TrackingPlugin80
 
 ```java
@@ -195,6 +193,7 @@ public class TrackingPlugin80 implements Plugin<Project> {
     }
 }
 ```
+
 - TrackingFactory80
 
 ```java
@@ -596,7 +595,6 @@ public class TrackingClassNode80 extends ClassVisitor {
         return str != null && str.trim().length() > 0;
     }
 }
-
 ```
 
 - AnalyticsHookConfig
@@ -679,7 +677,6 @@ public class AnalyticsHookConfig {
         }
     }
 }
-
 ```
 
 - AnalyticsMethodObj
@@ -837,7 +834,6 @@ public class AnalyticsMethodObj {
                 '}';
     }
 }
-
 ```
 
 修改文件后，执行一下 Task.publish
@@ -850,22 +846,20 @@ public class AnalyticsMethodObj {
 修改根目录下的 build.gradle ，替换插件版本号
 ![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20250123162434.png)
 
-
-
 ## 错误如果用到下面错误，
+
 ```
 Execution failed for task ':AppCommon:transform_debugDebugClassesWithAsm'.
 > A failure occurred while executing com.android.build.gradle.tasks.TransformClassesWithAsmTask$TransformClassesIncrementalAction
    > Error occurred while instrumenting class com.trade.eight.moudle.mission.vm.base.LoadUiState
-
 ```
 
 **解决方法**
 直接把 LoadUiState 文件给删除，目前没有用
 
-
-
 # 问题四
+
 后续问题
+
 1. Echat 聊天页面没有适配，会跑到导航栏下面去
-![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20250123184117.png)
+   ![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20250123184117.png)

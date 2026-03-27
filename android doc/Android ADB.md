@@ -1,20 +1,29 @@
 Android ADB
 
 - 查看设备列表
+
 ```
 > adb devices
 List of devices attached
 XPL5T20428011168        offline
 192.168.120.168:39871   device
-
 ```
 
+- 链接指定局域网设备
+
+```
+adb connect 192.168.202.194:40845
+```
+
+
 - 关闭指定设备
+
 ```
 adb -s adbName shell reboot -p  
 ```
 
 - 设备列表出现了 Offline 状态，移除不要设备
+
 ```
 在命令行或终端中，输入以下命令：
 adb kill-server
@@ -22,6 +31,7 @@ adb start-server
 ```
 
 - 查询用户id
+
 ```
 > adb -s XPL5T20428011168 shell pm list users
 Users:
@@ -51,4 +61,10 @@ adb -s XPL5T20428011168 shell pm disable-user --user 4000410 com.android.vending
 - 安装应用
 ```
 > adb -s "25sdfsfb3801745eg" install "C:\Users\joel.joel\Downloads\release.apk"
+```
+
+
+- 使用命令行 zipalign 工具进行 apk 16kb 验证
+```
+zipalign -c -P 16 -v 4 XTrendSpeed_xiaomi.apk
 ```

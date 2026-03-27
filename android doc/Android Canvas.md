@@ -822,22 +822,24 @@ private void canvasPath(Canvas canvas) {
 ```
 
 ## clipRect  裁剪画布，后面补充
+
 Region.Op 参数解读
 
 * Op.DIFFERENCE
-实际上就是求得的A和B的差集范围，即A－B，只有在此范围内的绘制内容才会被显
+  实际上就是求得的A和B的差集范围，即A－B，只有在此范围内的绘制内容才会被显
 * Op.REVERSE_DIFFERENCE
-实际上就是求得的B和A的差集范围，即B－A，只有在此范围内的绘制内容才会被显示
+  实际上就是求得的B和A的差集范围，即B－A，只有在此范围内的绘制内容才会被显示
 * Op.INTERSECT
-即A和B的交集范围，只有在此范围内的绘制内容才会被显示
+  即A和B的交集范围，只有在此范围内的绘制内容才会被显示
 * Op.REPLACE
-不论A和B的集合状况，B的范围将全部进行显示，如果和A有交集，则将覆盖A的交集范围
+  不论A和B的集合状况，B的范围将全部进行显示，如果和A有交集，则将覆盖A的交集范围
 * Op.UNION
-即A和B的并集范围，即两者所包括的范围的绘制内容都会被显示；
+  即A和B的并集范围，即两者所包括的范围的绘制内容都会被显示；
 * Op.XOR
-A和B的补集范围，此例中即A除去B以外的范围，只有在此范围内的绘制内容才会被显示
+  A和B的补集范围，此例中即A除去B以外的范围，只有在此范围内的绘制内容才会被显示
 
 首先是背景
+
 ```
 protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
@@ -851,12 +853,14 @@ protected void onDraw(Canvas canvas) {
     canvas.restore();
 }
 ```
+
 ![默认背景图片](https://gitee.com/ZeTing/UploadImg/raw/main/img/20230612164304.png)
 
 1. Region.Op.DIFFERENCE
-实际上就是求得的A和B的差集范围，即A－B，只有在此范围内的绘制内容才会被显
-```
-protected void onDraw(Canvas canvas) {
+   实际上就是求得的A和B的差集范围，即A－B，只有在此范围内的绘制内容才会被显
+   
+   ```
+   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
     canvas.save();
     mPaint.setColor(Color.RED);
@@ -865,7 +869,7 @@ protected void onDraw(Canvas canvas) {
     canvas.drawCircle(450, 400, 400, mPaint);
     mPaint.setColor(Color.YELLOW);
     canvas.drawRect(300, 0, 700, 400, mPaint);
-
+   
     // 裁剪形状 A
     canvas.clipRect(new RectF(0, 0, 300, 300));
     // 画布裁剪一个圆形
@@ -873,46 +877,50 @@ protected void onDraw(Canvas canvas) {
     mPath.addCircle(280, 190, 150, Path.Direction.CCW);
     // 裁剪形状 B
     canvas.clipPath(mPath, Region.Op.DIFFERENCE);
-//        canvas.clipPath(mPath, Region.Op.REVERSE_DIFFERENCE);
-//        canvas.clipPath(mPath, Region.Op.INTERSECT);
-//        canvas.clipPath(mPath, Region.Op.REPLACE);
-//        canvas.clipPath(mPath, Region.Op.UNION);
-//        canvas.clipPath(mPath, Region.Op.XOR);
-
+   //        canvas.clipPath(mPath, Region.Op.REVERSE_DIFFERENCE);
+   //        canvas.clipPath(mPath, Region.Op.INTERSECT);
+   //        canvas.clipPath(mPath, Region.Op.REPLACE);
+   //        canvas.clipPath(mPath, Region.Op.UNION);
+   //        canvas.clipPath(mPath, Region.Op.XOR);
+   
     mPaint.setColor(Color.parseColor("#FF4081"));
     canvas.drawRect(new RectF(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE), mPaint);
-
+   
     canvas.restore();
-}
-```
-![DIFFERENCE](https://gitee.com/ZeTing/UploadImg/raw/main/img/20230612164625.png)
+   }
+   ```
+   
+   ![DIFFERENCE](https://gitee.com/ZeTing/UploadImg/raw/main/img/20230612164625.png)
 
 2. Op.REVERSE_DIFFERENCE
-实际上就是求得的B和A的差集范围，即B－A，只有在此范围内的绘制内容才会被显示
-```
-代码都是一样，只不过设置参数不一致，后面直接贴图
-```
-![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20230612164824.png)
+   实际上就是求得的B和A的差集范围，即B－A，只有在此范围内的绘制内容才会被显示
+   
+   ```
+   代码都是一样，只不过设置参数不一致，后面直接贴图
+   ```
+   
+   ![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20230612164824.png)
 
 3. Op.INTERSECT
-即A和B的交集范围，只有在此范围内的绘制内容才会被显示
-![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20230612164901.png)
+   即A和B的交集范围，只有在此范围内的绘制内容才会被显示
+   ![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20230612164901.png)
 
 4. Op.REPLACE
-不论A和B的集合状况，B的范围将全部进行显示，如果和A有交集，则将覆盖A的交集范围
-![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20230612164938.png)
+   不论A和B的集合状况，B的范围将全部进行显示，如果和A有交集，则将覆盖A的交集范围
+   ![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20230612164938.png)
 
 5. Op.UNION
-即A和B的并集范围，即两者所包括的范围的绘制内容都会被显示
-![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20230612165014.png)
+   即A和B的并集范围，即两者所包括的范围的绘制内容都会被显示
+   ![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20230612165014.png)
 
 6. Op.XOR
-A和B的补集范围，A和B的并集，除去A和B交集以外的范围
-![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20230612165051.png)
-
+   A和B的补集范围，A和B的并集，除去A和B交集以外的范围
+   ![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20230612165051.png)
 
 ## 参数默认
+
 默认指的是设置裁切区域和当前屏幕最大的交集范围内，默认 Op.INTERSECT
+
 ```
 protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
