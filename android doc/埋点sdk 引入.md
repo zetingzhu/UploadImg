@@ -43,9 +43,6 @@ public void init(Application context, String market, boolean initCrash)
     }).start();
 ```
 
-
-
 ## 埋点其他应用
 
 DoraemonKit 等待转移 
-

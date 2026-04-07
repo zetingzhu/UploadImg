@@ -1,6 +1,7 @@
 Android 滑动机制研究
 
 ## NestedScrollingParent3
+
 ```
 /**
  * 子视图触发滑动时会回调该方法，父容器在该方法中根据子view、滑动方向、触摸类型等判断自己是否支持接收，
@@ -30,10 +31,10 @@ void onStopNestedScroll(@NonNull View target, @NestedScrollType int type);
 
 //是纵向滑动还是横向滑动
   int getNestedScrollAxes();
-
 ```
 
 ## NestedScrollingChild3
+
 ```
 /**
  * 通知开始滑动，会回调父容器的onStartNestedScroll方法。
@@ -64,9 +65,13 @@ boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, i
 ---
 
 ## 部分参数含义说明
+
 - child：表示包含target的当前容器的直接子view。
+
 - target：表示调用startNestedScroll触发onStartNestedScroll回调的那个子view。
+
 - axes：表示即将滑动的坐标轴方向，通过位运算求出方向。
+
 - type：表示触摸类型，有TYPE_TOUCH（用户触摸）、TYPE_NON_TOUCH（惯性滑动）两种类型。
 
 - dx：水平滑动偏移量。<0表示手指向右划，>0则相反。
@@ -80,26 +85,23 @@ boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, i
 - dyConsumed：子view消耗的垂直偏移量。
 
 - dxUnconsumed：子view滑动后还剩下的水平偏移量。
-- dyUnconsumed：子view滑动后还剩下的垂直偏移量。
-注意：若有用户触摸滑动到惯性滑动，会走两遍方法执行流程，即不同type各触发一次流程。
 
+- dyUnconsumed：子view滑动后还剩下的垂直偏移量。
+  注意：若有用户触摸滑动到惯性滑动，会走两遍方法执行流程，即不同type各触发一次流程。
 
 ---
-
 
 ## NestedScrollingChild 与 NestedScrollingParent 方法的对应关系
 
-|子View|父View|方法描述|
-|:--------|:---|:------------------ |
-startNestedScroll | onStartNestedScroll , onNestedScrollAccepted | Scrolling Child 开始滑动的时候，通知 Scrolling Parent 要开始滑动了，通常是在 Action_down 动作 的时候调用这个方法
-dispatchNestedPreScroll | onNestedPreScroll | 在 Scrolling Child 要开始滑动的时候，询问 Scrolling Parent 是否先于 Scrolling Child 进行相应的处理，同时是在 Action_move 的时候调用
-dispatchNestedScroll | onNestedScroll | 在 Scrolling Child 滑动后会询问 Scrolling Parent 是否需要继续滑动
-dispatchNestedPreFling | onNestedPreFling | 在 Scrolling Child 开始处理 Fling 动作的时候，询问 Scrolling Parent  是否需要先处理 Fling 动作
-dispatchNestedFling | onNestedFling | 在 Scrolling Child  处理 Fling 动作完毕的时候，询问 Scrolling Parent 是都还需要进行相应的处理
-stopNestedScroll | onStopNestedScroll | 在 Scrolling Child 停止滑动的时候，会调用 Scrolling Parent 的这个方法。通常是在 Action_up  或者 Action_cancel 或者被别的 View 消费 Touch 事件的时候调用的
-
+| 子View                   | 父View                                        | 方法描述                                                                                                               |
+|:----------------------- |:-------------------------------------------- |:------------------------------------------------------------------------------------------------------------------ |
+| startNestedScroll       | onStartNestedScroll , onNestedScrollAccepted | Scrolling Child 开始滑动的时候，通知 Scrolling Parent 要开始滑动了，通常是在 Action_down 动作 的时候调用这个方法                                   |
+| dispatchNestedPreScroll | onNestedPreScroll                            | 在 Scrolling Child 要开始滑动的时候，询问 Scrolling Parent 是否先于 Scrolling Child 进行相应的处理，同时是在 Action_move 的时候调用                 |
+| dispatchNestedScroll    | onNestedScroll                               | 在 Scrolling Child 滑动后会询问 Scrolling Parent 是否需要继续滑动                                                                 |
+| dispatchNestedPreFling  | onNestedPreFling                             | 在 Scrolling Child 开始处理 Fling 动作的时候，询问 Scrolling Parent  是否需要先处理 Fling 动作                                           |
+| dispatchNestedFling     | onNestedFling                                | 在 Scrolling Child  处理 Fling 动作完毕的时候，询问 Scrolling Parent 是都还需要进行相应的处理                                               |
+| stopNestedScroll        | onStopNestedScroll                           | 在 Scrolling Child 停止滑动的时候，会调用 Scrolling Parent 的这个方法。通常是在 Action_up  或者 Action_cancel 或者被别的 View 消费 Touch 事件的时候调用的 |
 
 ---
-
 
 ## NestedScrollView源码分析

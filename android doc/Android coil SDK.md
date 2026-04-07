@@ -2,7 +2,7 @@ Android coil SDK
 
 # 集成
 
-~~~groovy
+```groovy
 android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -13,7 +13,7 @@ android {
         freeCompilerArgs += "-Xjvm-default=all" // Only required for 2.x.
     }
 }
-~~~
+```
 
 依赖库
 
@@ -36,8 +36,6 @@ implementation(" io.coil-kt:coil-compose:1.4.0")
 implementation("io.coil-kt:coil-compose-base:1.4.0")
 ```
 
-
-
 # 使用
 
 ## 快速使用 load
@@ -57,17 +55,17 @@ imageView.load(File("/path/to/image.jpg"))
 
 ## lambad 使用
 
-~~~kotlin
+```kotlin
 imageView.load("https://www.example.com/image.jpg") {
     crossfade(true) //淡入淡出
     placeholder(R.drawable.image) //占位图
     transformations(CircleCropTransformation()) //图片变换，将图片转为圆形
 }
-~~~
+```
 
 ## java中是用使用
 
-~~~java
+```java
 ImageRequest request = new ImageRequest.Builder(this)
                 .data(url)
                 .crossfade(true)
@@ -81,31 +79,29 @@ ImageRequest request = new ImageRequest.Builder(context)
     .size(1080, 1920)
     .build();
 Drawable drawable = ImageLoaders.executeBlocking(imageLoader, request).getDrawable();
-~~~
+```
 
 ## 构建ImageRequest 自定义target 位置
 
-~~~kotlin
+```kotlin
 val request = ImageRequest.Builder(this)
     .data(ImgUrlConfig.IMG_URL_2)
     .target { drawable ->
-			iv_view6?.setImageDrawable(drawable)
+            iv_view6?.setImageDrawable(drawable)
             }
-	.build()
+    .build()
 baseContext.imageLoader.enqueue(request)
-~~~
+```
 
 ## enqueue：
 
 将要在后台线程上异步执行的 排队。ImageRequest
 
-
-
 ## execute：
 
 在当前协程中执行 ，并返回ImageResult。ImageRequest
 
-~~~kotlin
+```kotlin
  GlobalScope.launch(Dispatchers.Unconfined) {
             val request2 = ImageRequest.Builder(con)
                 .data(ImgUrlConfig.IMG_URL_1)
@@ -113,11 +109,11 @@ baseContext.imageLoader.enqueue(request)
             val drawable = imageLoader.execute(request = request2).drawable
             iv.setImageDrawable(drawable)
         }
-~~~
+```
 
 ## ImageLoader 实例
 
-~~~kotlin
+```kotlin
 class MyApplication : Application(), ImageLoaderFactory {
 
     override fun newImageLoader(): ImageLoader {
@@ -131,11 +127,11 @@ class MyApplication : Application(), ImageLoaderFactory {
             .build()
     }
 }
-~~~
+```
 
 或者
 
-~~~kotlin
+```kotlin
 val imageLoader = ImageLoader.Builder(context)
     .crossfade(true)
     .okHttpClient {
@@ -145,32 +141,30 @@ val imageLoader = ImageLoader.Builder(context)
     }
     .build()
 Coil.setImageLoader(imageLoader)
-~~~
+```
 
 获取ImadeLoad 单例
 
-~~~Kotlin
+```Kotlin
 val imageLoader = context.imageLoader
-~~~
+```
 
 ## 预加载
 
 要将映像预加载到内存中，请排队或执行 不带 ：ImageRequest Target
 
-~~~kotlin
+```kotlin
 val request = ImageRequest.Builder(context)
     .data("https://www.example.com/image.jpg")
     // Optional, but setting a ViewSizeResolver will conserve memory by limiting the size the image should be preloaded into memory at.
     .size(ViewSizeResolver(imageView))
     .build()
 imageLoader.enqueue(request)
-~~~
-
-
+```
 
 ## 取消请求
 
-~~~kotlin
+```kotlin
 val disposable = imageView.load("https://www.example.com/image.jpg")
 
 //取消正在进行的图片加载请求以及释放相关的资源
@@ -178,7 +172,7 @@ disposable.dispose()
 
 //非阻塞式地等待任务结束
 disposable.await()
-~~~
+```
 
 ## Jetpack Compose Coil 插件
 
@@ -235,7 +229,7 @@ iv.load(url) {
 
 自定义转换类型 WatermarkTransformation
 
-~~~kotlin
+```kotlin
 package com.zzt.coilsample.util
 
 import android.graphics.Bitmap
@@ -291,4 +285,4 @@ class WatermarkTransformation(private val watermark: String, @ColorInt private v
     }
 
 }
-~~~
+```

@@ -1,7 +1,5 @@
 **Android ASM 使用**
 
-
-
 Android 字节插桩
 
 # 1. 当前环境
@@ -77,7 +75,7 @@ com.zt.gradle/ZTTransform.groovy
 # 3.使用方法
 
 1. 添加本地依赖
-
+   
    ```
        // 添加Maven的本地依赖
            maven {
@@ -100,15 +98,6 @@ plugins {
 }
 ```
 
-
-
-
-
-
-
-
-
-
 ***
 
 编辑环境
@@ -121,49 +110,56 @@ Gradld 版本 7.6.2
 https://developer.android.google.cn/studio/releases/gradle-plugin?hl=zh-cn#updating-plugin
 
 # Plugin 项目快速创建与调试
+
 为了能够快速调试，并且不用打包打不引用 plugin ，遵循下面几步可以快速编辑调试 plugin
+
 1. 创建一个 javaLib 项目取名 buildSrc
-![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20231117140043.png)
+   ![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20231117140043.png)
 
 2. 去settings.gradle 中删除 include ':buildSrc'
-![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20231117140132.png)
+   ![](https://gitee.com/ZeTing/UploadImg/raw/main/img/20231117140132.png)
 
 3. buildSrc 项目的 build.gradle 添加 plugins ,repositories 和 dependencies
-```
-plugins {
+   
+   ```
+   plugins {
     id "groovy"
     id "maven-publish"
-}
-repositories {
+   }
+   repositories {
     google()
     mavenCentral()
-}
-dependencies {
+   }
+   dependencies {
     //gradle sdk
     implementation gradleApi()
     //groovy sdk
     implementation localGroovy()
     implementation 'com.android.tools.build:gradle:7.1.3'
     compileOnly("org.ow2.asm:asm-commons:9.3")
-}
-```
+   }
+   ```
+
 4. 创建 MyPlugin 实现 Plugin<Project>
-```
-public class MyPlugin implements Plugin<Project> {
+   
+   ```
+   public class MyPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
-
+   
     }
-}
-```
-5. 在自己的 app 项目中引用这个 plugin
-```
-import com.example.zzt.buildsrc.MyPlugin
-apply plugin: MyPlugin
-```
+   }
+   ```
 
+5. 在自己的 app 项目中引用这个 plugin
+   
+   ```
+   import com.example.zzt.buildsrc.MyPlugin
+   apply plugin: MyPlugin
+   ```
 
 # 简单 ClassVisitor 使用
+
 1. 实现 plugin
 
 ```
@@ -231,9 +227,11 @@ public class InsertLogClassVisitor extends ClassVisitor {
 ```
 
 # 字节码讲解
+
   这里不懂，随便截取一个说明一下，方便后面字节码插入
 
 java 代码
+
 ```
 textView.setOnClickListener(new View.OnClickListener() {
           @Override
@@ -242,7 +240,9 @@ textView.setOnClickListener(new View.OnClickListener() {
           }
       });
 ```
+
 编辑后 bytecode
+
 ```
 public void onClick(android.view.View);   // name: onClick
   descriptor: (Landroid/view/View;)V      // descriptor: (Landroid/view/View;)V
@@ -259,14 +259,7 @@ public void onClick(android.view.View);   // name: onClick
 // 局部变量  0 this ,1 Landroid/view/View;
 ```
 
-
-
-
-
-#   
-
-
-
+# 
 
 重复端口占用问题
 
@@ -277,7 +270,6 @@ sudo kill -9 PID
 # apt 编译后的文件文件在哪找
 
 ./gradlew build -Dorg.gradle.debug=true --no-daemon
-
 
 opcode 参数：指定了要加载的变量类型。常见的 ALOAD 用于加载引用类型（包括对象和数组）。
 

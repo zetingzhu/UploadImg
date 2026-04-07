@@ -1,4 +1,3 @@
-
 通过View或者Adapter的替换来实现骨架屏是最普遍的方案，该方案需要单独为骨架屏页面进行布局，如果页面过多或者比较复杂，
 写起来就还是蛮繁琐的。具体实现有
 ShimmerRecyclerView{https://github.com/sharish/ShimmerRecyclerView}、
