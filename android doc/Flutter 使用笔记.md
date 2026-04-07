@@ -127,18 +127,3 @@ output-localization-file: app_localizations.dart
 ```
 flutter gen-l10n
 ```
-
-
-# 问题汇总
-## 没办法直接按照 apk 报错
-```
-Error: Gradle build failed to produce an .apk file. It's likely that this file was generated under D:\ZZTAndroid\Work_Royal\build, but the tool couldn't find it.
-```
-
-- 解决办法
-
-```
-1.Build flavor: 在该框中输入 dev (对应你 build.gradle.kts 里的 productFlavors)。
-2.Additional run args: 建议添加 --flavor dev。
-3.点击 OK 保存。
-```
