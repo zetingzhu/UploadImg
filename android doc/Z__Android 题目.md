@@ -476,3 +476,736 @@ Flowable 支持背压策略（如 BackpressureStrategy.DROP 丢弃、BUFFER 缓�
 
 ### RxJava 和协程（Coroutines）的区别，
 RxJava 强在流式处理和极其丰富的操作符，而协程在处理简单的串行异步逻辑时更轻量、代码更像同步代码。
+
+
+
+一、Java/Kotlin 基础（20题）
+1. Java 中 == 和 equals() 的区别是什么？
+答：
+== 比较的是两个对象的引用是否相同（即内存地址是否一致）。
+equals() 是方法，默认行为与 == 相同，但可以被重写以比较对象的内容（如 String 类重写了 equals() 来比较字符串内容）。
+2. final 关键字的作用有哪些？
+答：
+修饰类：表示该类不能被继承。
+修饰方法：表示该方法不能被子类重写。
+修饰变量：表示该变量一旦赋值后不能被修改（常量）。
+3. Java 中的四种引用类型是什么？
+答：
+强引用（StrongReference）：最常见的引用，只要强引用存在，GC 就不会回收对象。
+软引用（SoftReference）：在内存不足时会被回收，常用于实现内存敏感的缓存。
+弱引用（WeakReference）：无论内存是否充足，只要发生 GC 就会被回收。
+虚引用（PhantomReference）：最弱的引用，无法通过它获取对象，主要用于跟踪对象被回收的状态。
+4. String、StringBuilder 和 StringBuffer 的区别？
+答：
+String 是不可变的，每次操作都会生成新对象，效率低。
+StringBuilder 是可变的，非线程安全，效率高。
+StringBuffer 是可变的，线程安全（方法加了 synchronized），效率较低。
+5. Java 中的异常体系是怎样的？
+答：
+所有异常都继承自 Throwable。
+Error 表示 JVM 无法处理的严重错误（如 OutOfMemoryError）。
+Exception 分为：
+检查异常（Checked Exception）：编译期必须处理（如 IOException）。
+非检查异常（Unchecked Exception）：运行时异常，继承自 RuntimeException（如 NullPointerException）。
+6. Kotlin 中 val 和 var 的区别？
+答：
+val 声明只读变量（类似 Java 的 final），只能赋值一次。
+var 声明可变变量，可以多次赋值。
+7. Kotlin 中 ?.、!!、?: 操作符的作用？
+答：
+?.：安全调用操作符，如果对象为 null 则返回 null，不抛异常。
+!!：强制非空断言，如果对象为 null 则抛出 NullPointerException。
+?:：Elvis 操作符，如果左侧表达式为 null，则返回右侧默认值。
+8. Kotlin 协程是什么？相比线程有什么优势？
+答：
+协程是轻量级的并发设计，基于挂起函数（suspend function）实现。
+优势：
+开销小：协程是用户态的，创建和切换成本远低于线程。
+不阻塞线程：挂起时释放底层线程，可用于高并发场景。
+代码简洁：避免回调地狱，用同步风格写异步代码。
+9. HashMap 的工作原理？
+答：
+基于数组 + 链表/红黑树（JDK 8+）实现。
+通过 key 的 hashCode() 计算哈希值，再通过扰动函数减少冲突。
+当链表长度 ≥ 8 且数组长度 ≥ 64 时，链表转为红黑树。
+扩容时容量翻倍，rehash 重新分配元素。
+10. Java 中的泛型擦除是什么意思？
+答：
+泛型信息只在编译期存在，运行时会被擦除（类型变为 Object 或限定类型）。
+目的是兼容 Java 5 之前的代码。
+导致无法在运行时获取泛型的实际类型（可通过反射绕过）。
+11. synchronized 和 ReentrantLock 的区别？
+答：
+synchronized 是 JVM 内置关键字，自动加锁/释放；ReentrantLock 是 API 级锁，需手动 lock/unlock。
+ReentrantLock 支持公平锁、可中断、超时等待、多条件变量等高级特性。
+synchronized 在 JDK 6 后经过优化（偏向锁、轻量级锁），性能已接近 ReentrantLock。
+12. Kotlin 中的扩展函数是什么？
+答：
+允许在不修改类源码的情况下，为类添加新函数。
+语法：fun ClassName.functionName() { ... }
+编译后实际是静态工具方法，第一个参数是接收者对象。
+13. Java 中的 volatile 关键字作用？
+答：
+保证变量的可见性：一个线程修改 volatile 变量后，其他线程能立即看到最新值。
+禁止指令重排序（通过内存屏障实现）。
+不保证原子性（如 i++ 仍需 synchronized 或 AtomicInteger）。
+14. Kotlin 中 let、run、with、apply、also 的区别？
+答：
+let：obj.let { it -> ... }，返回 lambda 表达式结果，常用于空安全调用。
+run：obj.run { ... }，返回 lambda 表达式结果，上下文是 obj 本身。
+with：with(obj) { ... }，同 run，但不是扩展函数。
+apply：obj.apply { ... }，返回 obj 本身，常用于对象配置。
+also：obj.also { it -> ... }，返回 obj 本身，常用于日志或副作用。
+15. Java 中的线程池核心参数有哪些？
+答：
+corePoolSize：核心线程数，即使空闲也不会被回收（除非 allowCoreThreadTimeOut）。
+maximumPoolSize：最大线程数。
+keepAliveTime：非核心线程空闲超时时间。
+workQueue：任务队列（如 LinkedBlockingQueue）。
+threadFactory：线程工厂。
+handler：拒绝策略（如 AbortPolicy、CallerRunsPolicy）。
+16. Kotlin 协程的三种启动模式（CoroutineStart）？
+答：
+DEFAULT：立即调度执行（可能挂起）。
+LAZY：懒加载，需调用 start() 或 join() 才启动。
+ATOMIC：类似 DEFAULT，但保证原子性（实验性）。
+UNDISPATCHED：立即在当前线程执行，直到第一个挂起点。
+17. Java 中的反射机制是什么？有什么优缺点？
+答：
+定义：在运行时动态获取类的信息并操作对象。
+优点：灵活性高，实现通用框架（如 Retrofit、Gson）。
+缺点：
+性能开销大（比直接调用慢）。
+破坏封装性，可能引发安全问题。
+编译期无法检查，易出错。
+18. Kotlin 中的密封类（Sealed Class）是什么？
+答：
+用于表示受限的类继承结构（子类数量固定且已知）。
+所有子类必须嵌套在密封类内部或同一文件中。
+常用于状态管理（如 Result.Success / Result.Error），配合 when 表达式实现 exhaustive check（穷尽检查）。
+19. Java 中的 hashCode() 和 equals() 为什么需要一起重写？
+答：
+根据 Java 规范：如果两个对象 equals() 返回 true，则它们的 hashCode() 必须相同。
+HashMap/HashSet 等集合依赖 hashCode() 定位桶，再用 equals() 比较元素。
+若只重写 equals() 不重写 hashCode()，可能导致相同逻辑对象被存入不同桶，无法正确查找。
+20. Kotlin 协程中的 Dispatchers 有哪些？
+答：
+Dispatchers.Main：Android 主线程，用于更新 UI。
+Dispatchers.IO：专为 I/O 操作优化的线程池（如文件、网络）。
+Dispatchers.Default：CPU 密集型任务的线程池（如计算、解析）。
+Dispatchers.Unconfined：不指定线程，直接在调用者线程启动，直到第一个挂起点。
+二、Android 基础组件（20题）
+21. Activity 的生命周期有哪些？各方法的作用？
+答：
+onCreate()：初始化，加载布局。
+onStart()：Activity 可见但不可交互。
+onResume()：Activity 获得焦点，可交互。
+onPause()：失去焦点（如弹出 Dialog），应暂停动画/传感器。
+onStop()：完全不可见，应释放资源（如取消网络请求）。
+onDestroy()：Activity 销毁，彻底清理。
+onRestart()：从停止状态重新启动。
+22. onStart() 和 onResume() 的区别？
+答：
+onStart() 表示 Activity 对用户可见（但可能被透明 Activity 覆盖）。
+onResume() 表示 Activity 处于前台，可接收用户输入。
+例如：弹出系统 Dialog 时，Activity 会 onPause() 但不会 onStop()。
+23. Activity 的四种启动模式？
+答：
+standard：默认模式，每次启动都创建新实例。
+singleTop：如果栈顶已是该 Activity，则复用（调用 onNewIntent()）。
+singleTask：栈内唯一，启动时清除其上方所有 Activity。
+singleInstance：独占一个任务栈，且栈中只有它自己。
+24. Fragment 的生命周期与 Activity 的关系？
+答：
+Fragment 生命周期受宿主 Activity 控制。
+关键回调：onAttach() → onCreate() → onCreateView() → onActivityCreated() → onStart() → onResume()。
+当 Activity 进入后台，Fragment 也会依次调用 onPause()、onStop()。
+25. 如何在 Fragment 中获取 Context？
+答：
+使用 requireContext()（推荐，非空）或 getActivity()（可能为 null）。
+注意：在 onAttach() 之前或 onDetach() 之后调用会 crash。
+26. Service 的两种启动方式及区别？
+答：
+startService()：启动服务，与调用者无关联，需主动 stopSelf() 或 stopService()。
+bindService()：绑定服务，与调用者生命周期绑定，解绑时自动销毁。
+可同时使用（既启动又绑定），此时需 unbind + stop 才销毁。
+27. Intent 的显式和隐式调用区别？
+答：
+显式 Intent：指定目标组件（如 new Intent(this, TargetActivity.class)）。
+隐式 Intent：通过 Action/Data/Category 描述意图，由系统匹配组件（如 ACTION_VIEW + URI）。
+28. BroadcastReceiver 的注册方式及区别？
+答：
+静态注册：在 AndroidManifest.xml 中声明，应用未启动也能接收（如开机广播）。
+动态注册：在代码中 registerReceiver()，随注册组件生命周期结束而失效。
+Android 8.0+ 限制静态注册大部分隐式广播，需动态注册。
+29. ContentProvider 的作用？
+答：
+提供跨应用数据共享的标准接口。
+封装数据访问细节，通过 URI 区分数据类型（如 content://contacts/people）。
+支持 CRUD 操作，底层可对接数据库、文件等。
+30. Application 和 Activity 的 Context 区别？
+答：
+Application Context：生命周期与应用一致，适合全局操作（如启动 Service、Toast）。
+Activity Context：生命周期与 Activity 一致，适合 UI 相关操作（如 inflate 布局、启动新 Activity）。
+注意：避免在单例中持有 Activity Context，防止内存泄漏。
+31. 如何保存 Activity 的临时状态？
+答：
+重写 onSaveInstanceState(Bundle outState)，将数据存入 Bundle。
+在 onCreate() 或 onRestoreInstanceState() 中恢复。
+适用于系统销毁重建（如横竖屏切换），不适用于主动 finish()。
+32. Task 和 Back Stack 是什么？
+答：
+Task：一组相关 Activity 的集合，以栈（Back Stack）形式管理。
+用户按 Back 键时，栈顶 Activity 出栈。
+默认情况下，同一应用的 Activity 在同一 Task 中。
+33. 如何退出整个应用？
+答：
+不推荐强行退出（违背 Android 设计理念）。
+正确做法：finish 所有 Activity（可通过维护 Activity 栈或发送广播）。
+极端情况：System.exit(0)（可能被系统杀死，不优雅）。
+34. PendingIntent 是什么？和 Intent 有何不同？
+答：
+PendingIntent：封装 Intent 和目标组件，允许其他应用/系统以你的权限执行操作。
+常用于 Notification、AlarmManager、Widget。
+本质是“延迟的 Intent”，携带了授权令牌。
+35. JobScheduler 的作用？
+答：
+在满足特定条件（如充电、联网）时执行后台任务。
+替代早期的 AlarmManager + BroadcastReceiver 组合。
+Android 5.0+ 推荐方案，更省电。
+36. WorkManager 的优势？
+答：
+兼容 Android 5.0+（内部根据版本选择 JobScheduler/AlarmManager）。
+保证任务最终执行（即使应用被杀）。
+支持约束条件（网络、电量）、链式任务、唯一任务。
+37. Android 中的进程优先级有哪些？
+答（从高到低）：
+前台进程（Foreground Process）：用户正在交互。
+可见进程（Visible Process）：Activity 可见但不在前台。
+服务进程（Service Process）：运行 startService() 的 Service。
+后台进程（Background Process）：不可见 Activity。
+空进程（Empty Process）：无任何组件，仅缓存。
+38. 如何监听 Activity 的生命周期？
+答：
+实现 Application.ActivityLifecycleCallbacks 接口。
+在 Application.onCreate() 中注册：registerActivityLifecycleCallbacks()。
+可统一处理埋点、内存监控等。
+39. Activity 之间如何传递数据？
+答：
+通过 Intent 的 extras（putExtra() / getExtra()）。
+数据需实现 Serializable 或 Parcelable（后者效率更高）。
+大数据（>1MB）避免传递，改用全局变量或数据库。
+40. 如何启动一个没有在 Manifest 中注册的 Activity？
+答：
+不可能。Android 要求所有 Activity 必须在 Manifest 中声明，否则抛出 ActivityNotFoundException。
+三、UI 与自定义 View（15题）
+41. View 的绘制流程？
+答：
+Measure：确定 View 的宽高（onMeasure()）。
+Layout：确定 View 在父容器中的位置（onLayout()）。
+Draw：绘制内容（onDraw()），包括背景、子 View、前景等。
+42. requestLayout()、invalidate()、postInvalidate() 的区别？
+答：
+requestLayout()：触发 Measure + Layout + Draw（整个流程）。
+invalidate()：触发 Draw（仅重绘），必须在主线程调用。
+postInvalidate()：同 invalidate()，但可在子线程调用（内部用 Handler 切回主线程）。
+43. dp、sp、px 的区别？
+答：
+px：像素，绝对单位。
+dp（density-independent pixel）：与屏幕密度无关的单位，1dp = 1px（在 160dpi 屏幕上）。
+sp（scale-independent pixel）：类似 dp，但会随系统字体大小缩放，用于文字。
+44. 如何优化 ListView/RecyclerView 的卡顿？
+答：
+ViewHolder 模式避免 findViewById()。
+避免在 onBindViewHolder() 中做耗时操作。
+图片加载使用 Glide/Picasso（带内存/磁盘缓存）。
+布局层级扁平化（ConstraintLayout）。
+Item 动画关闭或简化。
+45. RecyclerView 的缓存机制？
+答：
+Scrap：屏幕内临时移除的 ViewHolder（如滑动时），可快速复用。
+Cache：默认 2 个离屏 ViewHolder（mCachedViews），按 position 复用。
+RecyclerPool：按 viewType 分组的共享池，跨 RecyclerView 复用。
+ViewCacheExtension：开发者自定义缓存。
+46. 自定义 View 时 onMeasure() 的注意事项？
+答：
+必须处理 MeasureSpec 的三种模式：
+EXACTLY：精确值（如 match_parent、具体 dp）。
+AT_MOST：最大值（如 wrap_content）。
+UNSPECIFIED：无限制（如 ScrollView 中的子 View）。
+调用 setMeasuredDimension() 设置最终尺寸。
+47. onTouchEvent() 和 OnClickListener 的冲突如何解决？
+答：
+如果 onTouchEvent() 返回 true，会消费事件，OnClickListener 不触发。
+解决方案：在 onTouchEvent() 中判断 ACTION_UP 时手动调用 performClick()。
+48. SurfaceView 和 TextureView 的区别？
+答：
+SurfaceView：
+独立 Surface，绘制在单独线程（不阻塞 UI 线程）。
+有独立 Z 轴，不能做动画/截图。
+适用于视频播放、游戏。
+TextureView：
+作为普通 View，可做动画、Transform。
+绘制在 UI 线程，可能阻塞。
+需硬件加速支持。
+49. ConstraintLayout 的优势？
+答：
+扁平化布局，减少嵌套层级。
+支持百分比、链（Chains）、Guideline 等高级约束。
+性能优于 RelativeLayout。
+50. Jetpack Compose 的核心思想？
+答：
+声明式 UI：描述“UI 应该是什么样”，而非“如何更新”。
+基于 State 驱动：State 变化自动重组（Recomposition）。
+无 XML，纯 Kotlin 代码构建 UI。
+组合优于继承，函数即组件。
+51. 如何实现一个圆形头像？
+答：
+方案1：自定义 View，重写 onDraw()，用 Canvas.clipPath() 裁剪。
+方案2：使用 Glide 加载时 transform(CircleCrop())。
+方案3：用 CardView + app:cardCornerRadius="50dp"。
+52. View.post() 的作用？
+答：
+将 Runnable 投递到主线程消息队列尾部。
+常用于在 View 初始化后获取宽高（因 onMeasure 未完成前 getWidth()=0）。
+53. 如何检测 UI 卡顿？
+答：
+BlockCanary：监控主线程消息处理时间。
+Systrace：分析帧渲染耗时。
+Choreographer.FrameCallback：监听每一帧的绘制时间。
+54. LayoutInflater 的 inflate() 方法中 attachToRoot 参数作用？
+答：
+true：将 root 作为 parent，并将 inflated View 添加到 parent。
+false：仅解析 XML 生成 View，不添加到 parent（常用于 RecyclerView.ViewHolder）。
+55. 如何实现 ViewPager 的无限轮播？
+答：
+虚拟法：Adapter.getCount() 返回 Integer.MAX_VALUE，position 取模映射真实数据。
+首尾复制法：在数据首尾各加一个副本，滑动到副本时瞬间跳转到真实位置。
+四、性能优化（15题）
+56. 内存泄漏的常见原因及检测工具？
+答：
+原因：
+静态变量持有 Activity/Context。
+未注销广播/监听器。
+单例持有 Context。
+非静态内部类持有外部类引用（如 Handler）。
+工具：
+Android Studio Profiler。
+LeakCanary（自动检测并提示）。
+57. 如何避免 OOM？
+答：
+图片加载：使用 Glide（自动缩放、缓存），避免 BitmapFactory.decodeResource() 直接加载大图。
+大对象复用：如 RecyclerView 的 ViewHolder。
+内存缓存：LruCache 限制大小。
+及时释放资源：Bitmap.recycle()（仅当确定不再使用时）。
+58. ANR 的类型及原因？
+答：
+Input ANR：5 秒内未响应输入事件。
+Broadcast ANR：前台广播 10 秒 / 后台广播 60 秒未处理完。
+Service ANR：20 秒内未处理完 onStartCommand()。
+ContentProvider ANR：10 秒内未响应查询。
+根本原因：主线程被阻塞（如 I/O、复杂计算）。
+59. 如何优化 APK 体积？
+答：
+代码：开启 ProGuard/R8 混淆、移除无用代码。
+资源：压缩图片（WebP）、移除无用资源（shrinkResources true）。
+So 库：只保留必要 ABI（如 arm64-v8a）。
+动态交付：Play Feature Delivery 按需下载。
+60. 启动优化的关键点？
+答：
+闪屏页：用 Theme 替代空白 Activity。
+Application 初始化：
+延迟初始化（非必要组件放到首页后）。
+异步初始化（但注意线程安全）。
+首页布局：简化 XML，避免过度绘制。
+监控：通过 reportFullyDrawn() 测量启动时间。
+61. 如何减少过度绘制（Overdraw）？
+答：
+移除不必要的背景（如 ViewGroup 和子 View 都设背景）。
+使用 clipRect() 裁剪绘制区域。
+开启 GPU Overdraw 调试（开发者选项）。
+62. 冷启动 vs 热启动的区别？
+答：
+冷启动：应用进程不存在，需创建进程、Application、Activity。
+热启动：应用进程存在，只需创建 Activity（走 onResume()）。
+优化重点在冷启动。
+63. StrictMode 的作用？
+答：
+开发阶段检测主线程 I/O、内存泄漏等违规操作。
+通过 StrictMode.setThreadPolicy() / setVmPolicy() 配置。
+注意：仅用于 Debug，Release 必须关闭。
+64. 如何优化 RecyclerView 的滚动性能？
+答：
+setHasFixedSize(true)：Item 尺寸不变时启用。
+setItemViewCacheSize()：增大离屏缓存。
+DiffUtil：高效计算列表差异，避免全量刷新。
+65. 网络请求优化策略？
+答：
+合并请求：减少 HTTP 请求数。
+数据压缩：Gzip。
+缓存策略：HTTP Cache-Control / 自定义内存/磁盘缓存。
+协议升级：HTTP/2、QUIC。
+66. 如何监控帧率（FPS）？
+答：
+Choreographer.FrameCallback：每帧回调，计算时间间隔。
+GPU Rendering Profile：开发者选项中查看柱状图。
+Perfetto：系统级性能分析工具。
+67. 线程优化建议？
+答：
+避免频繁创建线程：使用线程池。
+I/O 操作用 IO 线程池（如协程 Dispatchers.IO）。
+CPU 密集型用 Default 线程池。
+主线程只做 UI 更新。
+68. SharedPreferences 的性能问题？
+答：
+apply() vs commit()：apply() 异步写入，commit() 同步阻塞。
+ANR 风险：首次加载全量 XML 到内存，大数据量时卡顿。
+替代方案：DataStore（基于 Kotlin 协程，异步、安全）。
+69. 如何减少电池消耗？
+答：
+批量处理网络请求（JobScheduler/WorkManager）。
+使用 FCM 替代轮询。
+传感器使用后及时注销。
+避免 WakeLock 长时间持有。
+70. Memory Profiler 的使用场景？
+答：
+查看内存分配（Allocation Tracking）。
+检测内存泄漏（Heap Dump + Analyzer）。
+监控内存抖动（频繁 GC）。
+五、架构与设计模式（15题）
+71. MVC、MVP、MVVM 的区别？
+答：
+MVC：
+Model：数据层。
+View：UI 层（Activity/Fragment）。
+Controller：Activity 兼任，耦合度高。
+MVP：
+Presenter：处理业务逻辑，隔离 View 和 Model。
+View 通过接口与 Presenter 通信。
+解决 Activity 胀肿问题。
+MVVM：
+ViewModel：持有 UI 相关数据，生命周期感知。
+DataBinding/ViewBinding：自动同步数据到 UI。
+更声明式，适合 Jetpack 生态。
+72. Jetpack 组件有哪些？作用是什么？
+答：
+Lifecycle：管理组件生命周期。
+LiveData：生命周期感知的数据持有者。
+ViewModel：存储和管理 UI 相关数据。
+Room：SQLite 对象映射库。
+Navigation：单 Activity 多 Fragment 导航。
+Paging：分页加载数据。
+WorkManager：后台任务调度。
+73. Repository 模式的优点？
+答：
+作为数据源的单一入口（本地 DB + 远程 API）。
+解耦业务逻辑和数据获取细节。
+便于单元测试（Mock Repository）。
+74. 单例模式的双重检查锁定（DCL）实现？
+答：
+java
+
+编辑
+
+
+
+public class Singleton {
+    private static volatile Singleton instance;
+    private Singleton() {}
+    public static Singleton getInstance() {
+        if (instance == null) {
+            synchronized (Singleton.class) {
+                if (instance == null) {
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }
+}
+volatile 防止指令重排序导致未初始化完成就被访问。
+75. LiveData 为什么不会内存泄漏？
+答：
+LiveData 与 LifecycleOwner（如 Activity）绑定。
+当 LifecycleOwner 销毁时，自动移除 Observer。
+内部通过 WeakReference + Lifecycle 状态判断实现。
+76. ViewModel 的原理？
+答：
+通过 HolderFragment（已废弃）或 ViewModelStore（Activity/Fragment 内部）持有。
+Configuration Change（如旋转）时，ViewModelStore 不会被销毁。
+依赖 SavedStateHandle 保存临时状态。
+77. 如何设计一个网络请求框架？
+答：
+分层：
+接口层：Retrofit 定义 API。
+数据层：Repository 整合本地/远程数据。
+业务层：UseCase 封装逻辑。
+功能：
+统一错误处理。
+缓存策略。
+加载状态管理（Loading/Success/Error）。
+78. 依赖注入（DI）的好处？
+答：
+解耦：对象创建与使用分离。
+可测试：轻松替换依赖（Mock）。
+灵活性：运行时切换实现。
+Android 推荐：Hilt（基于 Dagger）。
+79. 如何实现 EventBus？
+答：
+核心：观察者模式 + 注解处理器。
+步骤：
+注册：扫描 @Subscribe 注解的方法，存入 Map<EventType, List>。
+发送：post(event) 时，根据 event 类型找到所有 Subscriber 并反射调用。
+解注册：移除对应 Subscriber。
+注意：线程切换、粘性事件、内存泄漏。
+80. Clean Architecture 的分层？
+答：
+Presentation Layer：UI 相关（Activity/Fragment + ViewModel）。
+Domain Layer：业务逻辑（UseCase + Entities）。
+Data Layer：数据获取（Repository + DataSource）。
+依赖方向：外层依赖内层，内层不知道外层。
+81. 如何避免 Activity 胀肿？
+答：
+逻辑拆分到 ViewModel/Presenter。
+使用 UseCase 封装业务规则。
+工具类提取通用代码。
+采用 MVVM/MVP 架构。
+82. DataBinding 和 ViewBinding 的区别？
+答：
+DataBinding：
+支持双向绑定、表达式。
+编译期生成 Binding 类。
+性能略低（反射）。
+ViewBinding：
+仅替代 findViewById()。
+无额外性能开销。
+更轻量，Google 推荐。
+83. 如何设计一个图片加载框架？
+答：
+三级缓存：内存（LruCache）→ 磁盘（DiskLruCache）→ 网络。
+生命周期感知：自动暂停/恢复加载。
+变换：圆角、模糊等。
+内存优化：Bitmap 复用（inBitmap）。
+84. 什么是响应式编程？RxJava 的核心概念？
+答：
+响应式：数据流 + 变化传播。
+RxJava 核心：
+Observable：可观察数据流。
+Observer：观察者。
+Operator：操作符（map、filter、flatMap）。
+Scheduler：线程调度。
+85. 如何实现组件化？
+答：
+模块划分：业务模块（app、user、shop）+ 基础模块（base、network）。
+通信：
+Router：ARouter 实现页面跳转。
+接口下沉：公共接口放在 base 模块。
+事件总线：跨模块通信。
+依赖：implementation project(':module')。
+六、高级与系统原理（15题）
+86. Handler 的工作原理？
+答：
+MessageQueue：存储 Message 的单链表（按时间排序）。
+Looper：循环从 MQ 取 Message 并分发。
+Handler：发送 Message 到 MQ，并处理 callback。
+ThreadLocal：每个线程的 Looper 存储在线程局部变量中。
+87. Looper.loop() 为什么不会阻塞主线程？
+答：
+主线程的 Looper.loop() 是应用的主循环，负责处理 UI 事件、输入等。
+“阻塞”是指等待消息，而非死循环占用 CPU。
+当无消息时，epoll_wait() 会休眠，不消耗 CPU。
+88. Binder 机制的作用？
+答：
+Android IPC（进程间通信）的核心。
+基于 mmap 实现高效内存共享。
+通过 Binder 驱动，Client 调用 Server 服务（如 ActivityManagerService）。
+89. AMS（ActivityManagerService）的作用？
+答：
+管理四大组件的生命周期。
+负责 Task/Process 调度。
+处理应用启动、切换、销毁。
+90. Zygote 进程的作用？
+答：
+Android 应用进程的“孵化器”。
+预加载常用类（如 Activity、View），通过 fork() 创建新进程，节省启动时间。
+91. APK 安装过程？
+答：
+PackageManagerService 验证 APK 签名、完整性。
+解析 AndroidManifest.xml，注册组件信息。
+拷贝 APK 到 /data/app/。
+生成 dex 优化文件（OAT）。
+更新 Launcher 桌面图标。
+92. Dalvik vs ART 的区别？
+答：
+Dalvik：
+JIT（Just-In-Time）编译：运行时编译热点代码。
+每次启动需解释字节码，性能较低。
+ART：
+AOT（Ahead-Of-Time）编译：安装时编译为机器码。
+启动快、性能高，但占用更多存储空间。
+Android 5.0+ 默认使用 ART。
+93. 如何实现热修复？
+答：
+ClassLoader 方案（如 Tinker）：
+修复 dex 插入到 DexPathList 前端。
+重启生效。
+Native Hook 方案（如 AndFix）：
+替换方法指针（ArtMethod 结构体）。
+无需重启，但兼容性差。
+Instant Run 方案（已废弃）：基于 Split APK。
+94. 插件化原理？
+答：
+核心：动态加载未安装的 APK。
+关键技术：
+Hook AMS：拦截 startActivity()，替换为 Stub Activity。
+资源加载：AssetManager.addAssetPath()。
+ClassLoader：DexClassLoader 加载插件类。
+代表框架：RePlugin、VirtualAPK。
+95. Android 的安全机制？
+答：
+沙箱：每个应用独立 UID，文件隔离。
+权限模型：运行时权限（Android 6.0+）。
+签名机制：APK 必须签名，更新需相同签名。
+SELinux：内核级访问控制。
+96. 如何调试 Native Crash？
+答：
+获取 tombstone 日志（/data/tombstones/）。
+使用 addr2line + 符号表定位崩溃代码。
+NDK 提供 crash handler（如 Breakpad）。
+97. Systrace 的作用？
+答：
+系统级性能分析工具。
+可视化 CPU、I/O、渲染、Binder 调用等。
+通过 Trace.beginSection() 自定义标记。
+98. 如何实现无侵入埋点？
+答：
+ASM 字节码插桩：编译期修改字节码，在 onClick() 等方法插入埋点代码。
+AOP：AspectJ 切面编程。
+Hook：反射替换 View.OnClickListener。
+99. Android 的编译打包流程？
+答：
+AAPT2：编译资源 → R.java + resources.arsc。
+Java Compiler：编译 Java → .class。
+Kotlin Compiler：编译 Kotlin → .class。
+D8/R8：.class → .dex（混淆、优化）。
+打包：.dex + resources.arsc + so → APK。
+签名：jarsigner 或 apksigner。
+100. 如何保持技术成长？
+答（开放题）：
+阅读官方文档（Android Developers Blog）。
+源码学习（AOSP、Jetpack）。
+参与开源项目。
+技术分享与总结。
+关注新技术（Compose、Kotlin Multiplatform）。
+
+1. OkHttp 的核心优势是什么？
+答：
+高效连接管理：支持连接池复用 TCP 连接，减少握手开销。
+透明 GZIP 压缩：自动处理请求/响应的压缩与解压。
+强大的拦截器机制：可自定义网络层行为（如日志、重试、认证）。
+同步/异步 API：简洁的调用方式，异步基于回调或协程。
+默认支持 HTTP/2：多路复用，减少延迟。
+失败重试与重定向：自动处理常见网络问题。
+2. OkHttp 的拦截器（Interceptor）有哪几种？区别是什么？
+答：
+Application Interceptor（应用拦截器）：
+通过 addInterceptor() 添加。
+位于整个拦截链的最外层，只调用一次。
+可看到原始请求和最终响应（包括重定向、重试后的结果）。
+适合添加公共参数、日志记录。
+Network Interceptor（网络拦截器）：
+通过 addNetworkInterceptor() 添加。
+位于 ConnectInterceptor 和 CallServerInterceptor 之间。
+每次网络请求都会调用（包括重试、重定向）。
+可访问连接信息（如 IP、TLS 版本）。
+适合监控网络质量、调试底层协议。
+✅ 关键区别：应用拦截器关注“逻辑请求”，网络拦截器关注“物理请求”。
+3. 请描述 OkHttp 的拦截器链工作流程。
+答：
+OkHttp 使用责任链模式，拦截器按顺序执行：
+RetryAndFollowUpInterceptor：处理失败重试和重定向。
+BridgeInterceptor：补充请求头（如 Content-Length、Host）、处理 GZIP。
+CacheInterceptor：根据缓存策略返回缓存或发起网络请求。
+ConnectInterceptor：建立连接（从连接池获取或新建）。
+CallServerInterceptor：真正发送请求并读取响应。
+
+
+
+2. 数据处理与渲染
+高频刷新挑战： 健康数据（心率、血氧）通常是高频采集的。你是如何设计缓存策略和数据解析逻辑，以保证 UI 渲染（尤其是多形态图表）不掉帧、不卡顿的？
+
+图表实现： 在高帧率渲染交互中，你使用的是原生 Canvas 绘制、第三方库（如 MPAndroidChart）还是自研引擎？针对大量历史数据点的渲染，做了哪些内存和计算优化？
+
+3. 启动优化
+Splash 冷启动优化： 你提到进行了“UI 渲染层级压扁”，具体操作是什么？（例如：Merge 标签、ConstraintLayout 优化、还是移除了冗余背景？）
+
+协程并发： 在梳理三方库初始化时，哪些库是必须在主线程初始化的，哪些可以延迟或异步？如何处理三方库之间的依赖关系（例如 A 库初始化必须在 B 库之后）？
+
+1. IM 核心技术
+长连接与协议： 该政务级 IM 使用的是什么通讯协议（WebSocket, MQTT, 还是自定义 TCP）？如何处理弱网环境下的消息重发和心跳机制？
+
+本地数据库同步： 在高频读写同步逻辑中，如何保证消息的顺序性和唯一性？Room 或 SQLite 在高并发写入时你是如何防止数据库锁定（Database is locked）的？
+
+综合性通用问题（针对你的资历）
+选型对比： 在第一个项目中你用了 Kotlin + 协程，第二个项目用了 RxJava。在现在的开发视角看，你会如何评价这两者的优劣？在什么场景下你仍会推荐使用 RxJava？
+
+性能监控： 除了 LeakCanary，你平时如何监控线上 App 的 ANR 和 Crash 率？如果出现了一个偶发性的 OOM，你的排查思路是怎样的？
+
+## 1. 设计理念：冷流 (Cold Stream) 与 热流 (Hot Stream)
+面试题： 既然 RxJava 和 Flow 都可以处理异步数据流，它们在“冷/热流”的设计上有何异同？
+
+参考答案：
+
+共同点： 默认情况下，RxJava 的 Observable 和 Kotlin 的 Flow 都是冷流。即：如果没有订阅者（Subscriber / Collector），它们不会开始发射数据。
+
+不同点：
+
+RxJava 的热流通过 Subject 或 Processor 实现，或者通过 publish().connect() 转换。
+
+Flow 的热流通过 SharedFlow 和 StateFlow 实现。StateFlow 特别适合 UI 状态管理，因为它天生自带“粘性”和“去重（distinctUntilChanged）”特性，且必须有初始值。
+
+## 2. 线程调度与上下文切换
+面试题： RxJava 使用 subscribeOn 和 observeOn，Flow 使用 flowOn。它们在切换线程时的底层机制有什么区别？
+
+参考答案：
+
+RxJava： 采用的是显式调度器 (Schedulers)。subscribeOn 影响上游，observeOn 影响下游。其底层是基于装饰器模式，每切换一次线程都会包装一层新的 Observable。
+
+Flow： 采用的是协作式上下文 (Context Preservation)。flowOn 只影响其上游。
+
+核心区别： Flow 遵循“上下文保存”原则，不允许在 flow { ... } 内部通过 withContext 切换线程，否则会抛出异常。必须使用 flowOn。这保证了 Flow 的执行环境是安全且可预测的。
+
+## 3. 操作符与性能开销
+面试题： 从性能和包体积角度看，为什么 Google 现在更推荐在 Android 中使用 Flow 替代 RxJava？
+
+参考答案：
+
+包体积： RxJava 是一个庞大的库，拥有数百个操作符；Flow 是 Kotlin 协程库的一部分，利用了 扩展函数 (Extension Functions)。这意味着你只会在编译后包含你用到的部分，且无需引入复杂的 RxJava 依赖。
+
+内存开销： * RxJava 的每一个操作符都会创建一个新的对象，链路越长，内存抖动风险越大。
+
+Flow 利用了 Kotlin 的 suspend 关键字。Flow 的操作符大多是 inline 或者是简单的 suspend 函数，避免了大量的类加载和对象创建。
+
+## 4. 背压 (Backpressure) 处理机制
+面试题： RxJava 专门有 Flowable 来处理背压，而 Flow 似乎没有类似类，它是如何处理生产速度大于消费速度的情况的？
+
+参考答案：
+
+RxJava： Flowable 使用响应式拉取（Reactive Pull）策略，通过 request(n) 来告诉上游下游能接收多少数据，实现较为复杂。
+
+Flow： 天生支持背压。因为 Flow 的采集（collect）是一个 suspend 函数。
+
+如果下游处理太慢，上游的 emit 会被挂起 (Suspend)，直到下游处理完并准备好接收下一个。
+
+此外，Flow 提供了专门的缓冲操作符，如 .buffer()（异步缓冲）、.conflate()（丢弃旧数据只留最新）或 .collectLatest()（取消旧任务执行新任务）。
+
+## 5. 生命周期感知 (Lifecycle Awareness)
+面试题： 在 Android 中，Flow 如何比 RxJava 更安全地处理生命周期？
+
+参考答案：
+
+RxJava： 需要手动管理 Disposable，在 onCleared() 或 onDestroy() 中调用 dispose()，否则容易内存泄漏。
+
+Flow： 配合 lifecycleScope 或 repeatOnLifecycle 使用。
+
+尤其是 repeatOnLifecycle(Lifecycle.State.STARTED)，它能确保协程只在 UI 可见时运行，并在 UI 进入后台时自动销毁并重启，这比 RxJava 的手动管理要安全且简洁得多。

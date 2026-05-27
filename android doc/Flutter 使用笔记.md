@@ -127,3 +127,8 @@ output-localization-file: app_localizations.dart
 ```
 flutter gen-l10n
 ```
+
+
+# FLutter 学习路线
+
+## Riverpod 或 Bloc
