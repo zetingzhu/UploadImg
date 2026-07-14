@@ -269,6 +269,7 @@ sudo kill -9 PID
 
 # apt 编译后的文件文件在哪找
 
+
 ./gradlew build -Dorg.gradle.debug=true --no-daemon
 
 opcode 参数：指定了要加载的变量类型。常见的 ALOAD 用于加载引用类型（包括对象和数组）。
@@ -278,3 +279,10 @@ Opcodes.LLOAD：加载 long 类型
 Opcodes.FLOAD：加载 float 类型
 Opcodes.DLOAD：加载 double 类型
 Opcodes.ALOAD：加载引用类型 (Object/Array)
+
+
+
+# AS 编译后插桩的class 文件位置
+```
+build/intermediates/classes/_debugDebug/transform_debugDebugClassesWithAsm/dirs/com
+```

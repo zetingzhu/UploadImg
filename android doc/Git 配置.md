@@ -766,6 +766,10 @@ git pull origin master
 
 git diff ffd98b291e0caa6c33575c1ef465eae661ce40c9:filename b8e7b00c02b95b320f14b625663fdecf2d63e74c:filename
 
+
+## 导出 2024.01.01 到2024.09.30 的 git 提交记录
+ $env:LANG="en_US.UTF-8"; $env:LC_ALL="en_US.UTF-8"; [Console]::OutputEncoding=[System.Text.Encoding]::UTF8; git -c i18n.logOutputEncoding=UTF-8 -c core.quotepath=false log --since="2024-01-01 00:00:00" --until="2024-09-30 23:59:59" --date=format:"%Y-%m-%d %H:%M:%S" --pretty=format:"%h | %ad | %an | %s" | Out-File -FilePath "D:\ZZTAndroid\Work_SF\XTrendSF\git-commits-2024-01-01_to_2024-09-30.txt" -Encoding utf8 
+
 ## **删除git从新绑定项目提交地址**
 
 正确步骤：
